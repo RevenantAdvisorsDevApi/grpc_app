@@ -5,29 +5,22 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # -------------------------------
-# Automatically detect vcpkg on Windows
-# -------------------------------
-if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    if(DEFINED ENV{VCPKG_ROOT})
-        set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "Vcpkg toolchain file")
-    elseif(EXISTS "$ENV{USERPROFILE}/vcpkg/scripts/buildsystems/vcpkg.cmake")
-        set(CMAKE_TOOLCHAIN_FILE "$ENV{USERPROFILE}/vcpkg/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "Vcpkg toolchain file")
-    endif()
-endif()
-
-# -------------------------------
 # Find dependencies
 # -------------------------------
-find_package(Protobuf CONFIG REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
-find_package(CURL CONFIG REQUIRED)
+find_package(Protobuf REQUIRED)
 find_package(Threads REQUIRED)
+find_package(CURL REQUIRED)
+
+# gRPC via pkg-config
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GRPC REQUIRED grpc++ grpc)
+include_directories(${GRPC_INCLUDE_DIRS})
+link_directories(${GRPC_LIBRARY_DIRS})
+add_definitions(${GRPC_CFLAGS_OTHER})
 
 # Include directories
 include_directories(${Protobuf_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})  # for generated proto files
+include_directories(${CMAKE_CURRENT_BINARY_DIR}) # for generated proto files
 
 # -------------------------------
 # Proto files
@@ -71,16 +64,25 @@ foreach(proto_file ${PROTO_FILES})
 endforeach()
 
 # -------------------------------
-# Executables
+# Client library
+# -------------------------------
+add_library(client_lib src/client.cpp ${PROTO_SRCS} ${PROTO_HDRS})
+target_link_libraries(client_lib PRIVATE ${GRPC_LIBRARIES} protobuf curl Threads::Threads)
+
+# -------------------------------
+# Server executable
 # -------------------------------
 add_executable(server src/server.cpp ${PROTO_SRCS} ${PROTO_HDRS})
-target_link_libraries(server PRIVATE gRPC::grpc++ protobuf::libprotobuf CURL::libcurl Threads::Threads)
+target_link_libraries(server PRIVATE ${GRPC_LIBRARIES} protobuf curl Threads::Threads)
 
-add_executable(client_app src/client.cpp ${PROTO_SRCS} ${PROTO_HDRS})
-target_link_libraries(client_app PRIVATE gRPC::grpc++ protobuf::libprotobuf CURL::libcurl Threads::Threads)
-
+# -------------------------------
+# Main app executable
+# -------------------------------
 add_executable(main_app src/main.cpp ${PROTO_SRCS} ${PROTO_HDRS})
-target_link_libraries(main_app PRIVATE gRPC::grpc++ protobuf::libprotobuf CURL::libcurl Threads::Threads)
+target_link_libraries(main_app PRIVATE client_lib ${GRPC_LIBRARIES} protobuf curl Threads::Threads)
 
-add_executable(test_integration tests/test_basic.cpp ${PROTO_SRCS} ${PROTO_HDRS})
-target_link_libraries(test_integration PRIVATE gRPC::grpc++ protobuf::libprotobuf CURL::libcurl Threads::Threads)
+# -------------------------------
+# Optional test
+# -------------------------------
+#add_executable(test_integration tests/test_basic.cpp ${PROTO_SRCS} ${PROTO_HDRS})
+#target_link_libraries(test_integration PRIVATE client_lib ${GRPC_LIBRARIES} protobuf curl Threads::Threads)
