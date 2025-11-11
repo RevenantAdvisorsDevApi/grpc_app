@@ -1,0 +1,18 @@
+syntax = "proto3";
+package market;
+
+import "google/protobuf/timestamp.proto";
+
+service MarketData {
+  rpc Subscribe (SubscribeRequest) returns (stream Price) {}
+}
+
+message SubscribeRequest {
+  string ticker = 1;
+}
+
+message Price {
+  string ticker = 1;
+  double price = 2;
+  google.protobuf.Timestamp ts = 3;
+}
