@@ -14,7 +14,8 @@ using market::MarketData;
 class MarketDataClient {
 public:
     MarketDataClient(std::shared_ptr<Channel> channel)
-        : stub_(MarketData::NewStub(channel)) {}
+        : stub_(MarketData::NewStub(channel)) {
+    }
 
     void Subscribe(const std::string& ticker) {
         SubscribeRequest req;
