@@ -1,0 +1,5 @@
+/mnt/c/users/laura/desktop/cross_options/grpc_app/misc/CMakeFiles/client_lib.dir
+/mnt/c/users/laura/desktop/cross_options/grpc_app/misc/CMakeFiles/server.dir
+/mnt/c/users/laura/desktop/cross_options/grpc_app/misc/CMakeFiles/main_app.dir
+/mnt/c/users/laura/desktop/cross_options/grpc_app/misc/CMakeFiles/edit_cache.dir
+/mnt/c/users/laura/desktop/cross_options/grpc_app/misc/CMakeFiles/rebuild_cache.dir

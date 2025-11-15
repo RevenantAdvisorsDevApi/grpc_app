@@ -1,0 +1,2 @@
+/usr/bin/ar qc libclient_lib.a CMakeFiles/client_lib.dir/src/client.cpp.o CMakeFiles/client_lib.dir/generated/market.pb.cc.o CMakeFiles/client_lib.dir/generated/market.grpc.pb.cc.o
+/usr/bin/ranlib libclient_lib.a

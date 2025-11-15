@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/server.dir/src/server.cpp.o CMakeFiles/server.dir/generated/market.pb.cc.o CMakeFiles/server.dir/generated/market.grpc.pb.cc.o -o server  -lgrpc++ -lgrpc -lgpr -lprotobuf -lcurl 

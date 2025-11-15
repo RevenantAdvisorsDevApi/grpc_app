@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/main_app.dir/src/main.cpp.o CMakeFiles/main_app.dir/generated/market.pb.cc.o CMakeFiles/main_app.dir/generated/market.grpc.pb.cc.o -o main_app  libclient_lib.a -lgrpc++ -lgrpc -lgpr -lprotobuf -lcurl 
